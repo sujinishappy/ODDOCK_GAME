@@ -79,6 +79,42 @@ function showFloat(xPct, yPct, text, positive) {
     setTimeout(() => { try { el.remove(); } catch (e) {} }, 900);
 }
 
+
+// -----------------------------------------------------
+// 🎯 스프라이트 클릭 / 터치 처리 (핵심 최적화 부분)
+// -----------------------------------------------------
+function handleSpriteTap(ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+
+    const btn = ev.currentTarget;
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.remove();
+
+    const idx = Number(btn.dataset.type) || 0;
+    const x = Number(btn.dataset.x);
+    const y = Number(btn.dataset.y);
+
+    if (idx === 0) {
+        score -= 10;
+        showFloat(x, y, '-10', false);
+    } else {
+        score += 10;
+        showFloat(x, y, '+10', true);
+    }
+    updateHud();
+
+    const gif = explosionGifs[idx];
+    if (gif) addExplosionGif(x, y, gif, 1000);
+
+    playPop();
+}
+
+
+// --------------------------
+// 스프라이트 생성
+// --------------------------
 function spawnSprite() {
     const id = idSeq++;
     const x = rand(6, 94);
@@ -110,37 +146,22 @@ function spawnSprite() {
         btn.appendChild(img);
     }
 
-    btn.addEventListener('click', function(ev) {
-        ev.stopPropagation();
-        if (btn.disabled) return;
-        btn.disabled = true;
-        btn.remove();
-
-        const idx = Number(btn.dataset.type) || 0;
-        if (idx === 0) {
-            score -= 10;
-            showFloat(x, y, '-10', false);
-        } else {
-            score += 10;
-            showFloat(x, y, '+10', true);
-        }
-        updateHud();
-
-        const gif = explosionGifs[idx];
-        if (gif) addExplosionGif(x, y, gif, 1000);
-
-        // 💥 효과음 재생
-        playPop();
-
-    });
+    // ✔ click + touch 모두 지원
+    btn.addEventListener('click', handleSpriteTap);
+    btn.addEventListener('touchstart', handleSpriteTap);
 
     arena.appendChild(btn);
 
+    // 자동 제거
     setTimeout(() => {
         try { if (btn.parentNode) btn.remove(); } catch (e) {}
     }, 5000);
 }
 
+
+// --------------------------
+// 폭발 GIF
+// --------------------------
 function addExplosionGif(x, y, src, duration = 2000) {
     const id = 'g' + (idSeq++);
     const img = document.createElement('img');
@@ -155,6 +176,7 @@ function addExplosionGif(x, y, src, duration = 2000) {
     arena.appendChild(img);
     setTimeout(() => { try { img.remove(); } catch (e) {} }, duration);
 }
+
 
 // --------------------------
 // 🔊 터짐 효과음 PLAY
@@ -181,7 +203,7 @@ function startGame() {
     startBtn.style.display = 'none';
     stopBtn.style.display = 'inline-block';
 
-    // ⭐ BGM 재생
+    // BGM 재생
     bgm.currentTime = 0;
     bgm.play().catch(e => {});
 
@@ -206,7 +228,7 @@ function stopGame() {
     startBtn.style.display = 'inline-block';
     stopBtn.style.display = 'none';
 
-    bgm.pause();  // ⭐ BGM 멈춤
+    bgm.pause();
 }
 
 function finishGame() {
@@ -218,7 +240,7 @@ function finishGame() {
     startBtn.style.display = 'inline-block';
     stopBtn.style.display = 'none';
 
-    bgm.pause();  // ⭐ 종료 시 BGM 멈춤
+    bgm.pause();
 }
 
 function clearIntervals() {
@@ -234,23 +256,24 @@ function clearIntervals() {
 
 
 // --------------------------
-// 이벤트 바인딩
+// 이벤트 바인딩 (✔ 터치 지원 강화)
 // --------------------------
-mainStartBtn.addEventListener('click', startGame);
+function bindDualEvent(element, event, handler) {
+    element.addEventListener(event, handler);
+    element.addEventListener('touchstart', handler);
+}
 
-startBtn.addEventListener('click', () => {
-    if (startOverlay) startOverlay.style.display = 'none';
-    startGame();
-});
+bindDualEvent(mainStartBtn, 'click', startGame);
+bindDualEvent(startBtn, 'click', startGame);
 
-stopBtn.addEventListener('click', () => {
+bindDualEvent(stopBtn, 'click', () => {
     stopGame();
     endOverlay.style.display = 'none';
 });
 
-retryBtn.addEventListener('click', startGame);
+bindDualEvent(retryBtn, 'click', startGame);
 
-resetBtn.addEventListener('click', () => {
+bindDualEvent(resetBtn, 'click', () => {
     endOverlay.style.display = 'none';
     if (startOverlay) startOverlay.style.display = 'flex';
     startBtn.style.display = 'none';
@@ -262,4 +285,13 @@ resetBtn.addEventListener('click', () => {
 });
 
 updateHud();
-arena.addEventListener('mousedown', (e) => e.preventDefault());
+
+
+// -----------------------------------------------------
+// 📌 터치 스크롤/확대 방지 (키오스크 필수)
+// -----------------------------------------------------
+document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+// 배경 터치해도 클릭 안 생기게
+arena.addEventListener('mousedown', e => e.preventDefault());
+arena.addEventListener('touchstart', e => e.preventDefault());
