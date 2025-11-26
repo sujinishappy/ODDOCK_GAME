@@ -1,0 +1,291 @@
+@font-face {
+	font-family: 'Pretendard_Medium';
+	src:url('../img/Pretendard-Medium.otf');
+}
+@font-face {
+	font-family: 'Tenada';
+	src:url('../img/Tenada.ttf');
+}
+:root {
+            --bg: #f7fafc;
+            --card: #ffffff;
+            --accent: #ffffff;
+            --aspect-padding: 175.7%;
+            /* 기존 9% -> 약 22%로 증가 (약 2.4x) */
+            --sprite-size: 22%;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+	        font-family: 'Pretendard_Medium';
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .wrap {
+            width: 360px;
+            max-width: 92vw;
+        }
+
+        .hud {
+            display: flex;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 14px;
+            z-index: 10;
+        }
+
+        .hud .left {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .stat {
+            padding: 10px 14px;
+            text-align: center;
+        }
+
+        .stat .label {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .stat .value {
+            font-weight: 800;
+            font-size: 22px;
+            color: #111827;
+        }
+
+        /* 키움 */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button.btn {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 0;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        button.play {
+            background: var(--accent);
+            color: white;
+        }
+
+        button.stop {
+            background: #ef444400;
+            color: rgba(255, 255, 255, 0);
+        }
+
+        button.ghost {
+            background: transparent;
+            border: 1px solid #e5e7eb;
+            color: #111827;
+        }
+
+        .playfield {
+            position: relative;
+            background: linear-gradient(180deg, #fff 0%, #f3f4f6 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 36px rgba(2, 6, 23, 0.07);
+        }
+
+        .playfield .inner {
+            width: 100%;
+            padding-top: var(--aspect-padding);
+            position: relative;
+        }
+
+        .arena {
+            position: absolute;
+            inset: 0;
+            background-image: url("../img/start-bg.png");
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        .sprite-btn {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .sprite-btn img {
+            display: block;
+            width: 100%;
+            height: auto;
+            user-select: none;
+            pointer-events: none;
+            border-radius: 14%;
+        }
+
+        .sprite-box {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            border-radius: 14%;
+        }
+
+        .float-score {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            font-weight: 900;
+            font-size: 22px;
+            /* 키움 */
+            text-shadow: 0 8px 22px rgba(2, 6, 23, 0.18);
+            pointer-events: none;
+            opacity: 1;
+            transition: transform 900ms cubic-bezier(.2, .8, .2, 1), opacity 900ms linear;
+        }
+
+        /* explosion GIF: 더 크게 (sprite 크기에 비례) */
+        .explosion-gif {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            width: calc(var(--sprite-size) * 2.6);
+            /* 더 크게 보이게 */
+            height: auto;
+            will-change: opacity, transform;
+        }
+
+        .overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            background-image: url("../img/start-bg.png");
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0);
+            padding: 20px;
+            border-radius: 14px;
+            margin-top: 300px;
+            text-align: center;
+        }
+        .cloud{
+            position: absolute;
+            width: 100%;
+            height: 40%;
+            top: 0;
+            left: 0;
+        }
+        .cloud2{
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .first{
+            position: absolute;
+            top: 60px;
+            left: 30px;
+            width: 200px;
+            animation-name: float01;
+            animation-duration: 60s;
+        }
+        .second{
+            position: absolute;
+            transform: scaleX(-1);
+            top: 190px;
+            left: 300px;
+            width: 150px;
+            animation-name: float01;
+            animation-duration: 70s;
+        }
+        @keyframes float01 {
+            0%   { transform: translateX(0) translateY(0); opacity: 0.95; }
+            25%  { transform: translateX(40%) translateY(-2vw); opacity: 1; }
+            50%  { transform: translateX(80%) translateY(2vw); opacity: 0.9; }
+            75%  { transform: translateX(40%) translateY(-1vw); opacity: 1; }
+            100% { transform: translateX(0) translateY(0); opacity: 0.95; }
+        }
+        .card h2 {
+            font-family: 'Tenada';
+            margin: 0 0 10px;
+            font-size: 50px;
+            color: white;
+            -webkit-text-stroke: 1px #0D3174;
+        }
+
+        .card p {
+            font-size: 22px;
+            margin: 0;
+        }
+        #mainStartBtn{
+            padding:14px 160px; 
+            font-size:18px;
+            margin-top: 300px;
+            color: #2c2c2c;
+            letter-spacing: 10px;
+            background: rgba(255, 255, 255, 0.6);   /* 살짝 투명한 흰색 */
+            backdrop-filter: blur(10px);            /* 뒤 배경 흐림 */
+            -webkit-backdrop-filter: blur(10px);    /* Safari 호환용 */
+            border-radius: 14px;
+        }
+        .footer-note {
+            font-size: 18px;
+            color: #ffffff;
+            margin-top: 8px;
+        }
+
+        @media (min-width:520px) {
+            .wrap {
+                width: 480px;
+            }
+        }
+
+        /* placeholder style in case image missing */
+        .placeholder {
+            background: #ffd166;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2b2b2b;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        #retryBtn,#resetBtn{
+            width: 200px;
+            padding:10px 0; 
+            font-size:18px;
+            margin-top: 270px;
+            color: #2c2c2c;
+            background: rgba(255, 255, 255, 0.6);   /* 살짝 투명한 흰색 */
+            backdrop-filter: blur(10px);            /* 뒤 배경 흐림 */
+            -webkit-backdrop-filter: blur(10px);    /* Safari 호환용 */
+            border-radius: 14px;
+            letter-spacing: 3px;
+        }

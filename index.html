@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ODDOCK GAME</title>
+    <link rel="icon" type="image/x-icon" href="./img/logo.png">
+    <link rel="stylesheet" href="./css/index.css">
+    <style>
+        /* small tweak: reduce spawn density a bit visually by slightly increasing auto remove time? keep same */
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="playfield">
+            <div class="inner">
+              <!-- HUD -->
+              <div class="hud">
+                <div class="left">
+                    <div class="stat">
+                        <div class="label">남은 시간</div>
+                        <div id="time" class="value">0:30</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">점수</div>
+                        <div id="score" class="value">0</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <!-- 기본 HUD의 start 버튼은 스타트 스크린이 닫힌 뒤 보이도록 숨겨둡니다 -->
+                    <button id="startBtn" class="btn play" style="display:none">게임 시작</button>
+                    <button id="stopBtn" class="btn stop" style="display:none">중단</button>
+                </div>
+              </div>
+              
+                <div id="arena" class="arena" aria-live="polite"></div>
+            </div>
+
+            <!-- 초기 스타트 화면 (처음에 보임) -->
+            <div id="startOverlay" class="overlay">
+                <div class="card">
+                  <div class="cloud">
+                    <div class="cloud2">
+                      <img class="first" src="./img/cloud.png">
+                      <img class="second" src="./img/cloud.png">
+                    </div>
+                  </div>
+                    <h2>MINI GAME</h2>
+                    <p>30초 동안 오똑 캐릭터를 눌러봐요!</p>
+                    <!-- <div class="footer-note">단, 오똑이는 누르면 점수가 깎여요.</div> -->
+                    <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+                        <button id="mainStartBtn" class="btn play">시작</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 종료 오버레이 -->
+            <div id="endOverlay" style="display:none" class="overlay">
+                <div class="card">
+                  <div class="cloud">
+                    <div class="cloud2">
+                      <img class="first" src="./img/cloud.png">
+                      <img class="second" src="./img/cloud.png">
+                    </div>
+                  </div>
+                    <h2>게임 종료</h2>
+                    <p>최종 점수: <strong id="finalScore">0</strong></p>
+                    <div class="footer-note">30초동안 집중하셨네요!</div>
+                    <div style="display:flex;gap:10px;justify-content:center">
+                        <button id="retryBtn" class="btn play">다시하기</button>
+                        <button id="resetBtn" class="btn ghost">메인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./js/index.js"></script>
+    <script>
+        /* 이미지/이펙트 경로 (기본값: 그대로 유지) */
+        
+    </script>
+
+    <style>
+        @keyframes popScale {
+            0% {
+                transform: scale(0.2);
+                opacity: 0;
+                filter: blur(10px);
+            }
+
+            30% {
+                transform: scale(1.05);
+                opacity: 1;
+                filter: blur(0px);
+            }
+
+            100% {
+                transform: scale(1.8);
+                opacity: 0;
+            }
+        }
+    </style>
+</body>
+
+</html>
