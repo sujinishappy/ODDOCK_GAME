@@ -5,8 +5,11 @@ let bgm = new Audio('./sound/bgm.mp3');
 bgm.loop = true;
 bgm.volume = 0.4;
 
-let popSound = new Audio('./sound/pop.mp3');  // 터지는 효과음
+let popSound = new Audio('./sound/pop.mp3');      // +10점
 popSound.volume = 0.7;
+
+let popBadSound = new Audio('./sound/popBad.mp3'); // -10점 전용
+popBadSound.volume = 0.8;
 
 
 // --------------------------
@@ -81,7 +84,7 @@ function showFloat(xPct, yPct, text, positive) {
 
 
 // -----------------------------------------------------
-// 🎯 스프라이트 클릭 / 터치 처리 (핵심 최적화 부분)
+// 🎯 스프라이트 클릭 / 터치 처리 (수정됨)
 // -----------------------------------------------------
 function handleSpriteTap(ev) {
     ev.stopPropagation();
@@ -99,21 +102,22 @@ function handleSpriteTap(ev) {
     if (idx === 0) {
         score -= 10;
         showFloat(x, y, '-10', false);
+        popBad();  // ⬅ -10점 효과음
     } else {
         score += 10;
         showFloat(x, y, '+10', true);
+        popGood(); // ⬅ +10점 효과음
     }
+
     updateHud();
 
     const gif = explosionGifs[idx];
     if (gif) addExplosionGif(x, y, gif, 1000);
-
-    playPop();
 }
 
 
 // --------------------------
-// 스프라이트 생성
+// 스프라이트 생성 (난도 ↑)
 // --------------------------
 function spawnSprite() {
     const id = idSeq++;
@@ -146,16 +150,15 @@ function spawnSprite() {
         btn.appendChild(img);
     }
 
-    // ✔ click + touch 모두 지원
     btn.addEventListener('click', handleSpriteTap);
     btn.addEventListener('touchstart', handleSpriteTap);
 
     arena.appendChild(btn);
 
-    // 자동 제거
+    // 난도 ↑ → 3초 후 사라짐
     setTimeout(() => {
         try { if (btn.parentNode) btn.remove(); } catch (e) {}
-    }, 5000);
+    }, 1000);
 }
 
 
@@ -179,16 +182,21 @@ function addExplosionGif(x, y, src, duration = 2000) {
 
 
 // --------------------------
-// 🔊 터짐 효과음 PLAY
+// 🔊 효과음 (+10점 / -10점 분리)
 // --------------------------
-function playPop() {
+function popGood() {
     popSound.currentTime = 0;
     popSound.play().catch(e => {});
 }
 
+function popBad() {
+    popBadSound.currentTime = 0;
+    popBadSound.play().catch(e => {});
+}
+
 
 // --------------------------
-// 게임 시작
+// 게임 시작 (난도 ↑)
 // --------------------------
 function startGame() {
     clearIntervals();
@@ -197,20 +205,20 @@ function startGame() {
     timeLeft = GAME_DURATION;
     updateHud();
     endOverlay.style.display = 'none';
-
     if (startOverlay) startOverlay.style.display = 'none';
 
     startBtn.style.display = 'none';
     stopBtn.style.display = 'inline-block';
 
-    // BGM 재생
     bgm.currentTime = 0;
     bgm.play().catch(e => {});
 
+    // 난도 상승: 450ms마다 생성
     spawnTimer = setInterval(() => {
-        const count = Math.random() < 0.7 ? 1 : 2;
+        let r = Math.random();
+        let count = (r < 0.4) ? 1 : (r < 0.8 ? 2 : 3);
         for (let i = 0; i < count; i++) spawnSprite();
-    }, 700);
+    }, 450);
 
     startTs = Date.now();
     gameTimer = setInterval(() => {
@@ -227,7 +235,6 @@ function stopGame() {
     arena.innerHTML = '';
     startBtn.style.display = 'inline-block';
     stopBtn.style.display = 'none';
-
     bgm.pause();
 }
 
@@ -256,7 +263,7 @@ function clearIntervals() {
 
 
 // --------------------------
-// 이벤트 바인딩 (✔ 터치 지원 강화)
+// 이벤트 바인딩
 // --------------------------
 function bindDualEvent(element, event, handler) {
     element.addEventListener(event, handler);
@@ -287,11 +294,10 @@ bindDualEvent(resetBtn, 'click', () => {
 updateHud();
 
 
-// -----------------------------------------------------
-// 📌 터치 스크롤/확대 방지 (키오스크 필수)
-// -----------------------------------------------------
+// --------------------------
+// 📌 터치 스크롤/확대 방지
+// --------------------------
 document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
-// 배경 터치해도 클릭 안 생기게
 arena.addEventListener('mousedown', e => e.preventDefault());
 arena.addEventListener('touchstart', e => e.preventDefault());
