@@ -3,13 +3,13 @@
 // --------------------------
 let bgm = new Audio('./sound/bgm.mp3');
 bgm.loop = true;
-bgm.volume = 0.4;
+bgm.volume = 1.0;
 
 let popSound = new Audio('./sound/pop.mp3');      // +10점
-popSound.volume = 0.7;
+popSound.volume = 1.4;
 
 let popBadSound = new Audio('./sound/popBad.mp3'); // -10점 전용
-popBadSound.volume = 0.8;
+popBadSound.volume = 1.5;
 
 
 // --------------------------
@@ -301,3 +301,4 @@ document.addEventListener('touchmove', e => e.preventDefault(), { passive: false
 
 arena.addEventListener('mousedown', e => e.preventDefault());
 arena.addEventListener('touchstart', e => e.preventDefault());
+
