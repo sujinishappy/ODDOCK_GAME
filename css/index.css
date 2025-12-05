@@ -1,3 +1,7 @@
+html, body {
+    -webkit-user-drag: none;
+    user-select: none;
+}
 @font-face {
 	font-family: 'Pretendard_Medium';
 	src:url('../img/Pretendard-Medium.otf');
@@ -288,3 +292,4 @@ html, body {
             border-radius: 14px;
             letter-spacing: 3px;
         }
+
